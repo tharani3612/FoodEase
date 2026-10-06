@@ -1,0 +1,759 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap");
+
+
+/* =========================================
+   GLOBAL
+========================================= */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.register-page {
+  width: 100%;
+  min-height: 100vh;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 30px;
+
+  background:
+    radial-gradient(
+      circle at 0% 0%,
+      rgba(255, 96, 55, 0.07),
+      transparent 25%
+    ),
+    #f5f7fa;
+
+  font-family: "Poppins", sans-serif;
+
+  color: #1d1d1d;
+}
+
+
+/* =========================================
+   MAIN BOX
+========================================= */
+
+.register-container {
+  width: 100%;
+  max-width: 1140px;
+
+  min-height: 670px;
+
+  display: grid;
+
+  grid-template-columns: 50% 50%;
+
+  overflow: hidden;
+
+  background: #ffffff;
+
+  border-radius: 24px;
+
+  box-shadow:
+    0 25px 70px rgba(0, 0, 0, 0.09);
+}
+
+
+/* =========================================
+   LEFT IMAGE
+========================================= */
+
+.register-visual {
+  position: relative;
+
+  width: 100%;
+  height: 670px;
+
+  overflow: hidden;
+
+  background: #111;
+}
+
+.register-visual-image {
+  width: 100%;
+  height: 100%;
+
+  display: block;
+
+  object-fit: cover;
+
+  object-position: center;
+}
+
+
+/* =========================================
+   RIGHT SECTION
+========================================= */
+
+.register-form-section {
+  position: relative;
+
+  width: 100%;
+  min-height: 670px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  padding: 38px 55px;
+
+  overflow: hidden;
+
+  background: #ffffff;
+}
+
+
+/* =========================================
+   DECORATIVE CIRCLE
+========================================= */
+
+.register-form-section::before {
+  content: "";
+
+  position: absolute;
+
+  width: 170px;
+  height: 170px;
+
+  top: -85px;
+  right: -55px;
+
+  border-radius: 50%;
+
+  background: #fff1eb;
+}
+
+
+/* =========================================
+   FORM CONTAINER
+========================================= */
+
+.register-form-container {
+  position: relative;
+
+  width: 100%;
+
+  max-width: 410px;
+
+  z-index: 2;
+}
+
+
+/* =========================================
+   DECORATION
+========================================= */
+
+.register-decoration {
+  position: absolute;
+
+  top: -4px;
+  right: -5px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: flex-start;
+
+  transform: rotate(-5deg);
+
+  color: #ff4b21;
+
+  font-size: 10px;
+
+  font-weight: 600;
+
+  line-height: 1.25;
+}
+
+.register-decoration span:first-child {
+  font-size: 16px;
+
+  margin-bottom: 2px;
+}
+
+.register-decoration span:nth-child(2) {
+  font-size: 10px;
+}
+
+.register-decoration span:nth-child(3) {
+  font-size: 10px;
+}
+
+
+/* =========================================
+   HEADER
+========================================= */
+
+.register-form-header {
+  margin-bottom: 21px;
+
+  padding-right: 75px;
+}
+
+.register-label {
+  display: block;
+
+  margin-bottom: 7px;
+
+  color: #ff4b21;
+
+  font-size: 11px;
+
+  font-weight: 700;
+
+  letter-spacing: 2px;
+}
+
+.register-form-header h1 {
+  margin-bottom: 7px;
+
+  color: #101010;
+
+  font-size: 36px;
+
+  font-weight: 800;
+
+  line-height: 1.15;
+
+  letter-spacing: -0.9px;
+}
+
+.register-form-header h1 span {
+  color: #ff4b21;
+}
+
+.register-form-header p {
+  color: #7f8791;
+
+  font-size: 12px;
+
+  line-height: 1.6;
+}
+
+
+/* =========================================
+   FORM
+========================================= */
+
+.register-form {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 10px;
+}
+
+
+/* =========================================
+   INPUT FIELD
+========================================= */
+
+.register-input-field {
+  position: relative;
+
+  width: 100%;
+
+  height: 55px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 11px;
+
+  padding: 6px 13px;
+
+  border: 1px solid #e5e8ec;
+
+  border-radius: 14px;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 4px 14px rgba(30, 35, 40, 0.025);
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+.register-input-field:hover {
+  border-color: #ffd2c3;
+}
+
+.register-input-field:focus-within {
+  border-color: #ff572f;
+
+  box-shadow:
+    0 0 0 3px rgba(255, 87, 47, 0.08);
+
+  transform: translateY(-1px);
+}
+
+
+/* =========================================
+   INPUT ICON
+========================================= */
+
+.register-input-icon {
+  width: 39px;
+  height: 39px;
+
+  flex-shrink: 0;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 11px;
+
+  background: #fff4ef;
+
+  color: #ff512b;
+
+  font-size: 15px;
+}
+
+
+/* =========================================
+   INPUT CONTENT
+========================================= */
+
+.register-input-content {
+  flex: 1;
+
+  min-width: 0;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 1px;
+}
+
+.register-input-content label {
+  color: #3f4650;
+
+  font-size: 10px;
+
+  font-weight: 700;
+}
+
+.register-input-content input {
+  width: 100%;
+
+  height: 22px;
+
+  padding: 0;
+
+  border: none;
+
+  outline: none;
+
+  background: transparent;
+
+  color: #24292f;
+
+  font-family: "Poppins", sans-serif;
+
+  font-size: 12px;
+
+  font-weight: 500;
+}
+
+.register-input-content input::placeholder {
+  color: #aab2bc;
+
+  font-size: 11px;
+
+  font-weight: 400;
+}
+
+
+/* =========================================
+   PASSWORD TOGGLE
+========================================= */
+
+.register-toggle-password {
+  width: 31px;
+  height: 31px;
+
+  flex-shrink: 0;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+
+  border: none;
+
+  background: transparent;
+
+  color: #8b949e;
+
+  cursor: pointer;
+
+  font-size: 14px;
+
+  opacity: 0.75;
+
+  transition: 0.2s ease;
+}
+
+.register-toggle-password:hover {
+  opacity: 1;
+
+  transform: scale(1.05);
+}
+
+
+/* =========================================
+   TERMS
+========================================= */
+
+.register-terms {
+  display: flex;
+
+  align-items: center;
+
+  gap: 7px;
+
+  margin-top: 2px;
+
+  color: #7d858f;
+
+  font-size: 9px;
+
+  line-height: 1.5;
+
+  cursor: pointer;
+}
+
+.register-terms input {
+  width: 13px;
+  height: 13px;
+
+  flex-shrink: 0;
+
+  accent-color: #ff512b;
+
+  cursor: pointer;
+}
+
+.register-terms a {
+  color: #ff4b21;
+
+  text-decoration: none;
+
+  font-weight: 700;
+}
+
+
+/* =========================================
+   CREATE ACCOUNT BUTTON
+========================================= */
+
+.register-submit-btn {
+  position: relative;
+
+  width: 100%;
+
+  height: 50px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  margin-top: 3px;
+
+  border: none;
+
+  border-radius: 14px;
+
+  background:
+    linear-gradient(
+      100deg,
+      #ff4b20,
+      #ff642d
+    );
+
+  color: #ffffff;
+
+  font-family: "Poppins", sans-serif;
+
+  font-size: 13px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 10px 22px rgba(255, 76, 32, 0.21);
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.register-submit-btn:hover {
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 14px 27px rgba(255, 76, 32, 0.28);
+}
+
+.register-submit-btn span:first-child {
+  position: relative;
+
+  left: 7px;
+}
+
+.register-arrow {
+  position: absolute;
+
+  right: 8px;
+
+  width: 35px;
+  height: 35px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #ffffff;
+
+  color: #ff512b;
+
+  font-size: 17px;
+
+  font-weight: 600;
+}
+
+
+/* =========================================
+   LOGIN CARD
+========================================= */
+
+.register-login-card {
+  position: relative;
+
+  width: 100%;
+
+  height: 58px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 11px;
+
+  margin-top: 13px;
+
+  padding: 8px 13px;
+
+  overflow: hidden;
+
+  border-radius: 14px;
+
+  background:
+    linear-gradient(
+      100deg,
+      #fff1eb,
+      #fff8f5
+    );
+}
+
+.register-login-card::before {
+  content: "••••";
+
+  position: absolute;
+
+  top: 7px;
+  right: 12px;
+
+  color: rgba(255, 87, 47, 0.2);
+
+  font-size: 9px;
+
+  letter-spacing: 3px;
+}
+
+.register-login-card::after {
+  content: "";
+
+  position: absolute;
+
+  width: 75px;
+  height: 75px;
+
+  right: -30px;
+  bottom: -45px;
+
+  border-radius: 50%;
+
+  background: rgba(255, 111, 72, 0.11);
+}
+
+
+/* =========================================
+   LOGIN ICON
+========================================= */
+
+.register-login-icon {
+  width: 38px;
+  height: 38px;
+
+  flex-shrink: 0;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #ffe5da;
+
+  color: #ff572f;
+
+  font-size: 16px;
+}
+
+
+/* =========================================
+   LOGIN CONTENT
+========================================= */
+
+.register-login-content {
+  position: relative;
+
+  z-index: 2;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 1px;
+}
+
+.register-login-content span {
+  color: #7b838d;
+
+  font-size: 9px;
+}
+
+.register-login-content a {
+  color: #ff4b21;
+
+  font-size: 12px;
+
+  font-weight: 700;
+
+  text-decoration: none;
+}
+
+.register-login-content a:hover {
+  color: #e94116;
+}
+
+
+/* =========================================
+   BACK HOME
+========================================= */
+
+.register-home-link {
+  display: block;
+
+  margin-top: 9px;
+
+  color: #9aa2ad;
+
+  text-align: center;
+
+  text-decoration: none;
+
+  font-size: 9px;
+
+  transition: 0.2s ease;
+}
+
+.register-home-link:hover {
+  color: #ff4b21;
+}
+
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 900px) {
+
+  .register-page {
+    padding: 20px;
+  }
+
+  .register-container {
+    max-width: 480px;
+
+    min-height: auto;
+
+    grid-template-columns: 1fr;
+  }
+
+  .register-visual {
+    display: none;
+  }
+
+  .register-form-section {
+    min-height: auto;
+
+    padding: 40px 35px;
+  }
+
+}
+
+
+@media (max-width: 500px) {
+
+  .register-page {
+    padding: 15px;
+  }
+
+  .register-container {
+    border-radius: 18px;
+  }
+
+  .register-form-section {
+    padding: 30px 22px;
+  }
+
+  .register-form-header {
+    padding-right: 0;
+  }
+
+  .register-form-header h1 {
+    font-size: 29px;
+  }
+
+  .register-decoration {
+    display: none;
+  }
+
+}

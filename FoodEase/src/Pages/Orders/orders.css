@@ -1,0 +1,447 @@
+.orders-page {
+  min-height: 100vh;
+  background: #fdfaf7;
+  color: #1d1d1d;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+.orders-container {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 40px 24px 80px;
+}
+
+/* =========================
+   BREADCRUMB
+========================= */
+.orders-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 24px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.orders-breadcrumb a {
+  color: #e85d2a;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+
+.orders-breadcrumb a:hover {
+  opacity: 0.8;
+}
+
+.orders-breadcrumb span {
+  color: #aaa;
+}
+
+.orders-breadcrumb span:last-child {
+  color: #666;
+  font-weight: 600;
+}
+
+/* =========================
+   HEADING & HERO CARD
+========================= */
+.orders-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 32px 36px;
+  background: linear-gradient(135deg, #ffffff 0%, #fff6f0 100%);
+  border: 1px solid #f2e6de;
+  border-radius: 20px;
+  margin-bottom: 36px;
+  box-shadow: 0 10px 30px rgba(232, 93, 42, 0.05);
+}
+
+.orders-heading-info > span {
+  display: inline-block;
+  color: #e85d2a;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.orders-heading h1 {
+  margin: 0 0 6px;
+  font-size: 32px;
+  font-weight: 800;
+  color: #111;
+  letter-spacing: -0.5px;
+}
+
+.orders-heading p {
+  margin: 0;
+  color: #777;
+  font-size: 14px;
+}
+
+.order-food-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 22px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #ff6b35 0%, #e85d2a 100%);
+  color: white;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 700;
+  box-shadow: 0 6px 18px rgba(232, 93, 42, 0.25);
+  transition: all 0.25s ease;
+}
+
+.order-food-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 22px rgba(232, 93, 42, 0.35);
+}
+
+/* =========================
+   COUNT
+========================= */
+.orders-count {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  padding: 0 4px;
+}
+
+.orders-count h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.orders-count span {
+  background: #eee;
+  color: #555;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 20px;
+}
+
+/* =========================
+   ORDERS LIST
+========================= */
+.orders-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* =========================
+   ORDER CARD
+========================= */
+.order-card {
+  padding: 24px;
+  background: #ffffff;
+  border: 1px solid #f0e6e0;
+  border-radius: 18px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+  transition: all 0.25s ease;
+}
+
+.order-card:hover {
+  border-color: #e85d2a;
+  box-shadow: 0 12px 30px rgba(232, 93, 42, 0.08);
+  transform: translateY(-2px);
+}
+
+/* TOP HEADER */
+.order-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 16px;
+  border-bottom: 1px dashed #efe8e2;
+}
+
+.order-label {
+  display: block;
+  margin-bottom: 3px;
+  color: #999;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+}
+
+.order-card-top h3 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: #222;
+}
+
+/* STATUS BADGES */
+.order-status {
+  padding: 6px 14px;
+  border-radius: 30px;
+  font-size: 11px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.status-delivered {
+  background: #e6f7ec;
+  color: #1b8744;
+}
+
+.status-onway {
+  background: #fff5e5;
+  color: #d97706;
+}
+
+.status-placed {
+  background: #fff0eb;
+  color: #e85d2a;
+}
+
+/* RESTAURANT SECTION */
+.order-restaurant {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 0;
+}
+
+.restaurant-order-icon {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 14px;
+  background: #fff0eb;
+  font-size: 22px;
+  flex-shrink: 0;
+}
+
+.order-restaurant h3 {
+  margin: 0 0 3px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.order-restaurant p {
+  margin: 0;
+  color: #888;
+  font-size: 12px;
+}
+
+/* ITEMS SECTION */
+.order-items {
+  padding: 14px;
+  background: #faf7f5;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.order-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+}
+
+.order-item-detail {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.order-item-qty {
+  color: #e85d2a;
+  font-weight: 700;
+  background: #fff;
+  padding: 2px 8px;
+  border-radius: 6px;
+  border: 1px solid #f0e2d9;
+  font-size: 12px;
+}
+
+.order-item-name {
+  color: #444;
+  font-weight: 500;
+}
+
+.order-item-price {
+  color: #222;
+  font-weight: 700;
+}
+
+/* BOTTOM SECTION */
+.order-card-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 18px;
+  margin-top: 4px;
+}
+
+.order-meta-group {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+
+.order-payment,
+.order-total {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.order-payment span,
+.order-total span {
+  color: #999;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.order-payment strong {
+  color: #444;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.order-total strong {
+  color: #e85d2a;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.view-order-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border: 1.5px solid #f2d2c2;
+  border-radius: 10px;
+  background: #fff;
+  color: #e85d2a;
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 700;
+  transition: all 0.2s ease;
+}
+
+.view-order-btn:hover {
+  background: #e85d2a;
+  color: white;
+  border-color: #e85d2a;
+  box-shadow: 0 4px 12px rgba(232, 93, 42, 0.2);
+}
+
+.view-order-btn span {
+  transition: transform 0.2s ease;
+}
+
+.view-order-btn:hover span {
+  transform: translateX(3px);
+}
+
+/* =========================
+   EMPTY STATE
+========================= */
+.empty-orders {
+  padding: 60px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background: white;
+  border: 1px solid #f0e6e0;
+  border-radius: 24px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.02);
+}
+
+.empty-orders-icon {
+  width: 90px;
+  height: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #fff0eb 0%, #ffe3d8 100%);
+  font-size: 40px;
+  box-shadow: 0 8px 20px rgba(232, 93, 42, 0.12);
+}
+
+.empty-orders h2 {
+  margin: 0 0 10px;
+  font-size: 24px;
+  font-weight: 800;
+  color: #111;
+}
+
+.empty-orders p {
+  max-width: 360px;
+  margin: 0 0 28px;
+  color: #777;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.browse-restaurants-btn {
+  padding: 14px 28px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #ff6b35 0%, #e85d2a 100%);
+  color: white;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 700;
+  box-shadow: 0 6px 18px rgba(232, 93, 42, 0.25);
+  transition: all 0.25s ease;
+}
+
+.browse-restaurants-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 22px rgba(232, 93, 42, 0.35);
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+@media (max-width: 650px) {
+  .orders-heading {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+    padding: 24px;
+  }
+
+  .orders-heading h1 {
+    font-size: 26px;
+  }
+
+  .order-card-bottom {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+
+  .order-meta-group {
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .view-order-btn {
+    justify-content: center;
+    width: 100%;
+  }
+}
