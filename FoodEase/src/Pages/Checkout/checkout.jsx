@@ -14,6 +14,10 @@ function Checkout() {
     ? `foodEaseCart_${userEmail}`
     : null;
 
+  const ordersKey = userEmail
+    ? `foodEaseOrders_${userEmail}`
+    : null;
+
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
@@ -97,13 +101,13 @@ function Checkout() {
       return;
     }
 
-    if (!cartKey) {
-      alert("Unable to access your cart.");
+    if (!cartKey || !ordersKey) {
+      alert("Unable to access your account data.");
       return;
     }
 
     const orderId =
-      "FE" + Math.floor(1000 + Math.random() * 9000);
+      "FE" + Date.now().toString().slice(-8);
 
     const newOrder = {
       id: orderId,
@@ -120,10 +124,10 @@ function Checkout() {
         price: Number(item.price || 0),
       })),
 
-      subtotal: subtotal,
-      deliveryFee: deliveryFee,
-      tax: tax,
-      total: total,
+      subtotal,
+      deliveryFee,
+      tax,
+      total,
 
       status: "Order Placed",
 
@@ -145,13 +149,17 @@ function Checkout() {
     };
 
     // =========================================
-    // SAVE ORDER
+    // SAVE ORDER TO USER-SPECIFIC STORAGE
     // =========================================
 
     try {
       const existingOrders = JSON.parse(
-        localStorage.getItem("orders") || "[]"
+        localStorage.getItem(ordersKey) || "[]"
       );
+
+      if (!Array.isArray(existingOrders)) {
+        throw new Error("Invalid orders data");
+      }
 
       const updatedOrders = [
         newOrder,
@@ -159,7 +167,7 @@ function Checkout() {
       ];
 
       localStorage.setItem(
-        "orders",
+        ordersKey,
         JSON.stringify(updatedOrders)
       );
 
@@ -176,11 +184,12 @@ function Checkout() {
       );
 
       navigate(`/orders/${orderId}`);
-
     } catch (error) {
       console.error("Order placement error:", error);
 
-      alert("Unable to place your order. Please try again.");
+      alert(
+        "Unable to place your order. Please try again."
+      );
     }
   };
 
@@ -572,11 +581,11 @@ function Checkout() {
 
             <div className="checkout-items">
 
-              {cartItems.map((item) => (
+              {cartItems.map((item, index) => (
 
                 <div
                   className="checkout-item"
-                  key={item.id}
+                  key={`${item.id}-${index}`}
                 >
 
                   <div className="checkout-item-image">
