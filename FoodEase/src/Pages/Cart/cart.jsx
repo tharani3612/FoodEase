@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -8,28 +9,65 @@ function Cart() {
 
   const [cartItems, setCartItems] = useState([]);
 
-  useEffect(() => {
-    const savedCart =
-      JSON.parse(localStorage.getItem("cart")) || [];
+  // =========================================
+  // USER CART KEY
+  // =========================================
 
-    setCartItems(savedCart);
-  }, []);
+  const userEmail = localStorage.getItem("userEmail");
+
+  const cartKey = userEmail
+    ? `foodEaseCart_${userEmail}`
+    : null;
+
+  // =========================================
+  // LOAD CART ITEMS
+  // =========================================
+
+  useEffect(() => {
+    if (!cartKey) {
+      setCartItems([]);
+      return;
+    }
+
+    try {
+      const savedCart = JSON.parse(
+        localStorage.getItem(cartKey) || "[]"
+      );
+
+      setCartItems(
+        Array.isArray(savedCart) ? savedCart : []
+      );
+    } catch (error) {
+      console.error("Cart loading error:", error);
+      setCartItems([]);
+    }
+  }, [cartKey]);
+
+  // =========================================
+  // UPDATE CART
+  // =========================================
 
   const updateCart = (updatedCart) => {
     setCartItems(updatedCart);
 
-    localStorage.setItem(
-      "cart",
-      JSON.stringify(updatedCart)
-    );
+    if (cartKey) {
+      localStorage.setItem(
+        cartKey,
+        JSON.stringify(updatedCart)
+      );
+    }
   };
+
+  // =========================================
+  // INCREASE QUANTITY
+  // =========================================
 
   const increaseQuantity = (id) => {
     const updatedCart = cartItems.map((item) =>
       item.id === id
         ? {
             ...item,
-            quantity: item.quantity + 1
+            quantity: Number(item.quantity || 0) + 1,
           }
         : item
     );
@@ -37,13 +75,17 @@ function Cart() {
     updateCart(updatedCart);
   };
 
+  // =========================================
+  // DECREASE QUANTITY
+  // =========================================
+
   const decreaseQuantity = (id) => {
     const updatedCart = cartItems
       .map((item) =>
         item.id === id
           ? {
               ...item,
-              quantity: item.quantity - 1
+              quantity: Number(item.quantity || 0) - 1,
             }
           : item
       )
@@ -51,6 +93,10 @@ function Cart() {
 
     updateCart(updatedCart);
   };
+
+  // =========================================
+  // REMOVE ITEM
+  // =========================================
 
   const removeItem = (id) => {
     const updatedCart = cartItems.filter(
@@ -60,15 +106,27 @@ function Cart() {
     updateCart(updatedCart);
   };
 
+  // =========================================
+  // CLEAR CART
+  // =========================================
+
   const clearCart = () => {
     setCartItems([]);
 
-    localStorage.removeItem("cart");
+    if (cartKey) {
+      localStorage.removeItem(cartKey);
+    }
   };
+
+  // =========================================
+  // PRICE CALCULATION
+  // =========================================
 
   const subtotal = cartItems.reduce(
     (total, item) =>
-      total + item.price * item.quantity,
+      total +
+      Number(item.price || 0) *
+        Number(item.quantity || 0),
     0
   );
 
@@ -78,26 +136,40 @@ function Cart() {
 
   const total = subtotal + deliveryFee + tax;
 
+  // =========================================
+  // CART PAGE
+  // =========================================
+
   return (
     <div className="cart-page">
 
       <div className="cart-container">
 
-        {/* Breadcrumb */}
+        {/* BREADCRUMB */}
 
         <div className="cart-breadcrumb">
-          <Link to="/">Home</Link>
+
+          <Link to="/home">
+            Home
+          </Link>
+
           <span>/</span>
-          <span>Cart</span>
+
+          <span>
+            Cart
+          </span>
+
         </div>
 
-
-        {/* Heading */}
+        {/* HEADING */}
 
         <div className="cart-heading">
 
           <div>
-            <span>YOUR ORDER</span>
+
+            <span>
+              YOUR ORDER
+            </span>
 
             <h1>
               Shopping Cart
@@ -105,28 +177,28 @@ function Cart() {
 
             <p>
               {cartItems.length}{" "}
-              {cartItems.length === 1
-                ? "item"
-                : "items"}{" "}
+              {cartItems.length === 1 ? "item" : "items"}{" "}
               in your cart
             </p>
+
           </div>
 
           {cartItems.length > 0 && (
+
             <button
               className="clear-cart-btn"
               onClick={clearCart}
             >
               Clear Cart
             </button>
+
           )}
 
         </div>
 
+        {/* EMPTY CART */}
 
         {cartItems.length === 0 ? (
-
-          /* EMPTY CART */
 
           <div className="empty-cart">
 
@@ -158,11 +230,12 @@ function Cart() {
 
           <div className="cart-layout">
 
-            {/* ITEMS */}
+            {/* ITEMS SECTION */}
 
             <div className="cart-items-section">
 
               <div className="cart-items-header">
+
                 <h2>
                   Your Items
                 </h2>
@@ -170,6 +243,7 @@ function Cart() {
                 <span>
                   {cartItems.length} items
                 </span>
+
               </div>
 
               <div className="cart-items">
@@ -181,6 +255,8 @@ function Cart() {
                     key={item.id}
                   >
 
+                    {/* IMAGE */}
+
                     <div className="cart-item-image">
 
                       <img
@@ -190,6 +266,7 @@ function Cart() {
 
                     </div>
 
+                    {/* ITEM INFO */}
 
                     <div className="cart-item-info">
 
@@ -207,12 +284,14 @@ function Cart() {
 
                     </div>
 
+                    {/* ACTIONS */}
 
                     <div className="cart-item-actions">
 
                       <div className="quantity-control">
 
                         <button
+                          type="button"
                           onClick={() =>
                             decreaseQuantity(item.id)
                           }
@@ -225,6 +304,7 @@ function Cart() {
                         </span>
 
                         <button
+                          type="button"
                           onClick={() =>
                             increaseQuantity(item.id)
                           }
@@ -235,10 +315,13 @@ function Cart() {
                       </div>
 
                       <strong>
-                        ₹{item.price * item.quantity}
+                        ₹
+                        {Number(item.price || 0) *
+                          Number(item.quantity || 0)}
                       </strong>
 
                       <button
+                        type="button"
                         className="remove-item"
                         onClick={() =>
                           removeItem(item.id)
@@ -255,6 +338,8 @@ function Cart() {
 
               </div>
 
+              {/* CONTINUE SHOPPING */}
+
               <Link
                 to="/restaurants"
                 className="continue-shopping"
@@ -264,18 +349,22 @@ function Cart() {
 
             </div>
 
-
-            {/* SUMMARY */}
+            {/* ORDER SUMMARY */}
 
             <aside className="cart-summary">
 
               <div className="summary-header">
+
                 <h2>
                   Order Summary
                 </h2>
+
               </div>
 
+              {/* SUBTOTAL */}
+
               <div className="summary-row">
+
                 <span>
                   Subtotal
                 </span>
@@ -283,9 +372,13 @@ function Cart() {
                 <strong>
                   ₹{subtotal}
                 </strong>
+
               </div>
 
+              {/* DELIVERY */}
+
               <div className="summary-row">
+
                 <span>
                   Delivery Fee
                 </span>
@@ -293,9 +386,13 @@ function Cart() {
                 <strong>
                   ₹{deliveryFee}
                 </strong>
+
               </div>
 
+              {/* TAX */}
+
               <div className="summary-row">
+
                 <span>
                   Taxes
                 </span>
@@ -303,11 +400,15 @@ function Cart() {
                 <strong>
                   ₹{tax}
                 </strong>
+
               </div>
 
               <div className="summary-divider"></div>
 
+              {/* TOTAL */}
+
               <div className="summary-total">
+
                 <span>
                   Total
                 </span>
@@ -315,9 +416,13 @@ function Cart() {
                 <strong>
                   ₹{total}
                 </strong>
+
               </div>
 
+              {/* CHECKOUT BUTTON */}
+
               <button
+                type="button"
                 className="checkout-btn"
                 onClick={() =>
                   navigate("/checkout")

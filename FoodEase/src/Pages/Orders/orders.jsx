@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
@@ -6,12 +7,44 @@ import "./orders.css";
 function Orders() {
   const [orders, setOrders] = useState([]);
 
-  useEffect(() => {
-    const savedOrders =
-      JSON.parse(localStorage.getItem("orders")) || [];
+  // =========================================
+  // USER ORDERS KEY
+  // =========================================
 
-    setOrders(savedOrders);
-  }, []);
+  const userEmail = localStorage.getItem("userEmail");
+
+  const ordersKey = userEmail
+    ? `foodEaseOrders_${userEmail}`
+    : null;
+
+  // =========================================
+  // LOAD USER ORDERS
+  // =========================================
+
+  useEffect(() => {
+    if (!ordersKey) {
+      setOrders([]);
+      return;
+    }
+
+    try {
+      const savedOrders = JSON.parse(
+        localStorage.getItem(ordersKey) || "[]"
+      );
+
+      setOrders(
+        Array.isArray(savedOrders) ? savedOrders : []
+      );
+
+    } catch (error) {
+      console.error("Orders loading error:", error);
+      setOrders([]);
+    }
+  }, [ordersKey]);
+
+  // =========================================
+  // STATUS CLASS
+  // =========================================
 
   const getStatusClass = (status) => {
     if (status === "Delivered") {
@@ -25,64 +58,130 @@ function Orders() {
     return "status-placed";
   };
 
+  // =========================================
+  // ORDERS PAGE
+  // =========================================
+
   return (
     <div className="orders-page">
+
       <div className="orders-container">
 
         {/* BREADCRUMB */}
+
         <div className="orders-breadcrumb">
-          <Link to="/">Home</Link>
+
+          <Link to="/home">
+            Home
+          </Link>
+
           <span>/</span>
-          <span>Orders</span>
+
+          <span>
+            Orders
+          </span>
+
         </div>
 
         {/* HEADING HERO */}
+
         <div className="orders-heading">
+
           <div className="orders-heading-info">
-            <span>YOUR ORDERS</span>
-            <h1>Order History</h1>
-            <p>Track and manage all your FoodEase orders seamlessly.</p>
+
+            <span>
+              YOUR ORDERS
+            </span>
+
+            <h1>
+              Order History
+            </h1>
+
+            <p>
+              Track and manage all your FoodEase orders seamlessly.
+            </p>
+
           </div>
 
-          <Link to="/restaurants" className="order-food-btn">
+          <Link
+            to="/restaurants"
+            className="order-food-btn"
+          >
             Order Food <span>+</span>
           </Link>
+
         </div>
+
+        {/* EMPTY ORDERS */}
 
         {orders.length === 0 ? (
 
-          /* EMPTY ORDERS STATE */
           <div className="empty-orders">
-            <div className="empty-orders-icon">📦</div>
-            <h2>No orders yet</h2>
+
+            <div className="empty-orders-icon">
+              📦
+            </div>
+
+            <h2>
+              No orders yet
+            </h2>
+
             <p>
-              You haven't placed any orders yet. Start exploring delicious food from top restaurants!
+              You haven't placed any orders yet.
+              Start exploring delicious food from top restaurants!
             </p>
-            <Link to="/restaurants" className="browse-restaurants-btn">
+
+            <Link
+              to="/restaurants"
+              className="browse-restaurants-btn"
+            >
               Browse Restaurants
             </Link>
+
           </div>
 
         ) : (
 
-          /* ORDERS LIST CONTENT */
+          /* ORDERS CONTENT */
+
           <div className="orders-content">
+
             <div className="orders-count">
-              <h2>Recent Orders</h2>
+
+              <h2>
+                Recent Orders
+              </h2>
+
               <span>
-                {orders.length} {orders.length === 1 ? "order" : "orders"}
+                {orders.length}{" "}
+                {orders.length === 1 ? "order" : "orders"}
               </span>
+
             </div>
 
             <div className="orders-list">
+
               {orders.map((order) => (
-                <div className="order-card" key={order.id}>
+
+                <div
+                  className="order-card"
+                  key={order.id}
+                >
 
                   {/* ORDER TOP */}
+
                   <div className="order-card-top">
+
                     <div>
-                      <span className="order-label">ORDER ID</span>
-                      <h3>#{order.id}</h3>
+
+                      <span className="order-label">
+                        ORDER ID
+                      </span>
+
+                      <h3>
+                        #{order.id}
+                      </h3>
+
                     </div>
 
                     <span
@@ -92,51 +191,96 @@ function Orders() {
                     >
                       ● {order.status}
                     </span>
+
                   </div>
 
                   {/* RESTAURANT INFO */}
+
                   <div className="order-restaurant">
-                    <div className="restaurant-order-icon">🍴</div>
-                    <div>
-                      <h3>{order.restaurant}</h3>
-                      <p>Ordered on {order.date}</p>
+
+                    <div className="restaurant-order-icon">
+                      🍴
                     </div>
+
+                    <div>
+
+                      <h3>
+                        {order.restaurant}
+                      </h3>
+
+                      <p>
+                        Ordered on {order.date}
+                      </p>
+
+                    </div>
+
                   </div>
 
-                  {/* ITEMS LIST */}
+                  {/* ORDER ITEMS */}
+
                   <div className="order-items">
-                    {order.items.map((item, index) => (
+
+                    {(order.items || []).map((item, index) => (
+
                       <div
                         className="order-item"
                         key={`${item.name}-${index}`}
                       >
+
                         <div className="order-item-detail">
+
                           <span className="order-item-qty">
                             {item.quantity}x
                           </span>
+
                           <span className="order-item-name">
                             {item.name}
                           </span>
+
                         </div>
+
                         <span className="order-item-price">
-                          ₹{item.price * item.quantity}
+                          ₹
+                          {Number(item.price || 0) *
+                            Number(item.quantity || 0)}
                         </span>
+
                       </div>
+
                     ))}
+
                   </div>
 
-                  {/* BOTTOM INFO & ACTION */}
+                  {/* BOTTOM INFO */}
+
                   <div className="order-card-bottom">
+
                     <div className="order-meta-group">
+
                       <div className="order-payment">
-                        <span>Payment</span>
-                        <strong>{order.payment}</strong>
+
+                        <span>
+                          Payment
+                        </span>
+
+                        <strong>
+                          {order.payment}
+                        </strong>
+
                       </div>
 
                       <div className="order-total">
-                        <span>Total Paid</span>
-                        <strong>₹{order.total}</strong>
+
+                        <span>
+                          Total Paid
+                        </span>
+
+                        <strong>
+                          ₹{order.total}
+                        </strong>
+
                       </div>
+
                     </div>
 
                     <Link
@@ -145,16 +289,21 @@ function Orders() {
                     >
                       View Details <span>→</span>
                     </Link>
+
                   </div>
 
                 </div>
+
               ))}
+
             </div>
+
           </div>
 
         )}
 
       </div>
+
     </div>
   );
 }

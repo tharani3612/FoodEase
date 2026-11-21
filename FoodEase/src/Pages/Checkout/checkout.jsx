@@ -1,6 +1,6 @@
+
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-
 import "./checkout.css";
 
 function Checkout() {
@@ -8,25 +8,54 @@ function Checkout() {
 
   const [cartItems, setCartItems] = useState([]);
 
+  const userEmail = localStorage.getItem("userEmail");
+
+  const cartKey = userEmail
+    ? `foodEaseCart_${userEmail}`
+    : null;
+
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
     address: "",
     city: "",
     pincode: "",
-    payment: "UPI"
+    payment: "UPI",
   });
 
-  useEffect(() => {
-    const savedCart =
-      JSON.parse(localStorage.getItem("cart")) || [];
+  // =========================================
+  // LOAD USER CART
+  // =========================================
 
-    setCartItems(savedCart);
-  }, []);
+  useEffect(() => {
+    if (!cartKey) {
+      setCartItems([]);
+      return;
+    }
+
+    try {
+      const savedCart = JSON.parse(
+        localStorage.getItem(cartKey) || "[]"
+      );
+
+      setCartItems(
+        Array.isArray(savedCart) ? savedCart : []
+      );
+    } catch (error) {
+      console.error("Cart loading error:", error);
+      setCartItems([]);
+    }
+  }, [cartKey]);
+
+  // =========================================
+  // PRICE CALCULATION
+  // =========================================
 
   const subtotal = cartItems.reduce(
     (total, item) =>
-      total + item.price * item.quantity,
+      total +
+      Number(item.price || 0) *
+        Number(item.quantity || 0),
     0
   );
 
@@ -36,21 +65,40 @@ function Checkout() {
 
   const total = subtotal + deliveryFee + tax;
 
+  // =========================================
+  // FORM CHANGE
+  // =========================================
+
   const handleChange = (e) => {
     const { name, value } = e.target;
 
     setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
+
+  // =========================================
+  // PLACE ORDER
+  // =========================================
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    if (!userEmail) {
+      alert("Please login before placing an order.");
+      navigate("/login");
+      return;
+    }
+
     if (cartItems.length === 0) {
       alert("Your cart is empty!");
       navigate("/restaurants");
+      return;
+    }
+
+    if (!cartKey) {
+      alert("Unable to access your cart.");
       return;
     }
 
@@ -59,52 +107,86 @@ function Checkout() {
 
     const newOrder = {
       id: orderId,
+
       restaurant:
-        cartItems[0]?.restaurantName || "FoodEase Restaurant",
+        cartItems[0]?.restaurantName ||
+        "FoodEase Restaurant",
+
       items: cartItems.map((item) => ({
+        id: item.id,
         name: item.name,
-        quantity: item.quantity,
-        price: item.price
+        image: item.image,
+        quantity: Number(item.quantity || 1),
+        price: Number(item.price || 0),
       })),
+
+      subtotal: subtotal,
+      deliveryFee: deliveryFee,
+      tax: tax,
       total: total,
+
       status: "Order Placed",
-      date: new Date().toLocaleDateString(
-        "en-GB",
-        {
-          day: "2-digit",
-          month: "short",
-          year: "numeric"
-        }
-      ),
+
+      date: new Date().toLocaleDateString("en-GB", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+      }),
+
       payment: formData.payment,
+
       customer: {
         name: formData.name,
         phone: formData.phone,
         address: formData.address,
         city: formData.city,
-        pincode: formData.pincode
-      }
+        pincode: formData.pincode,
+      },
     };
 
-    const existingOrders =
-      JSON.parse(localStorage.getItem("orders")) || [];
+    // =========================================
+    // SAVE ORDER
+    // =========================================
 
-    localStorage.setItem(
-      "orders",
-      JSON.stringify([
+    try {
+      const existingOrders = JSON.parse(
+        localStorage.getItem("orders") || "[]"
+      );
+
+      const updatedOrders = [
         newOrder,
-        ...existingOrders
-      ])
-    );
+        ...existingOrders,
+      ];
 
-    localStorage.removeItem("cart");
+      localStorage.setItem(
+        "orders",
+        JSON.stringify(updatedOrders)
+      );
 
-    alert(
-      `Order placed successfully! Order ID: ${orderId}`
-    );
+      // =========================================
+      // CLEAR USER CART
+      // =========================================
 
-    navigate(`/orders/${orderId}`);
+      localStorage.removeItem(cartKey);
+
+      setCartItems([]);
+
+      alert(
+        `Order placed successfully! Order ID: ${orderId}`
+      );
+
+      navigate(`/orders/${orderId}`);
+
+    } catch (error) {
+      console.error("Order placement error:", error);
+
+      alert("Unable to place your order. Please try again.");
+    }
   };
+
+  // =========================================
+  // EMPTY CART
+  // =========================================
 
   if (cartItems.length === 0) {
     return (
@@ -136,6 +218,10 @@ function Checkout() {
     );
   }
 
+  // =========================================
+  // CHECKOUT PAGE
+  // =========================================
+
   return (
     <div className="checkout-page">
 
@@ -144,18 +230,32 @@ function Checkout() {
         {/* BREADCRUMB */}
 
         <div className="checkout-breadcrumb">
-          <Link to="/">Home</Link>
-          <span>/</span>
-          <Link to="/cart">Cart</Link>
-          <span>/</span>
-          <span>Checkout</span>
-        </div>
 
+          <Link to="/home">
+            Home
+          </Link>
+
+          <span>/</span>
+
+          <Link to="/cart">
+            Cart
+          </Link>
+
+          <span>/</span>
+
+          <span>
+            Checkout
+          </span>
+
+        </div>
 
         {/* HEADING */}
 
         <div className="checkout-heading">
-          <span>FINAL STEP</span>
+
+          <span>
+            FINAL STEP
+          </span>
 
           <h1>
             Checkout
@@ -164,15 +264,15 @@ function Checkout() {
           <p>
             Enter your details and place your order.
           </p>
-        </div>
 
+        </div>
 
         <form
           className="checkout-layout"
           onSubmit={handleSubmit}
         >
 
-          {/* LEFT */}
+          {/* LEFT SECTION */}
 
           <div className="checkout-left">
 
@@ -181,6 +281,7 @@ function Checkout() {
             <section className="checkout-section">
 
               <div className="checkout-section-heading">
+
                 <div className="checkout-number">
                   01
                 </div>
@@ -194,8 +295,8 @@ function Checkout() {
                     Where should we deliver your order?
                   </p>
                 </div>
-              </div>
 
+              </div>
 
               <div className="checkout-form-grid">
 
@@ -216,7 +317,6 @@ function Checkout() {
 
                 </div>
 
-
                 <div className="checkout-field">
 
                   <label>
@@ -230,11 +330,11 @@ function Checkout() {
                     onChange={handleChange}
                     placeholder="Enter phone number"
                     pattern="[0-9]{10}"
+                    maxLength={10}
                     required
                   />
 
                 </div>
-
 
                 <div className="checkout-field full-width">
 
@@ -253,7 +353,6 @@ function Checkout() {
 
                 </div>
 
-
                 <div className="checkout-field">
 
                   <label>
@@ -271,7 +370,6 @@ function Checkout() {
 
                 </div>
 
-
                 <div className="checkout-field">
 
                   <label>
@@ -285,6 +383,7 @@ function Checkout() {
                     onChange={handleChange}
                     placeholder="6 digit pincode"
                     pattern="[0-9]{6}"
+                    maxLength={6}
                     required
                   />
 
@@ -293,7 +392,6 @@ function Checkout() {
               </div>
 
             </section>
-
 
             {/* PAYMENT */}
 
@@ -317,8 +415,9 @@ function Checkout() {
 
               </div>
 
-
               <div className="payment-options">
+
+                {/* UPI */}
 
                 <label
                   className={
@@ -341,6 +440,7 @@ function Checkout() {
                   </span>
 
                   <span className="payment-info">
+
                     <strong>
                       UPI
                     </strong>
@@ -348,6 +448,7 @@ function Checkout() {
                     <small>
                       Google Pay, PhonePe, Paytm
                     </small>
+
                   </span>
 
                   <span className="payment-check">
@@ -356,6 +457,7 @@ function Checkout() {
 
                 </label>
 
+                {/* CARD */}
 
                 <label
                   className={
@@ -378,6 +480,7 @@ function Checkout() {
                   </span>
 
                   <span className="payment-info">
+
                     <strong>
                       Credit / Debit Card
                     </strong>
@@ -385,6 +488,7 @@ function Checkout() {
                     <small>
                       Visa, Mastercard, RuPay
                     </small>
+
                   </span>
 
                   <span className="payment-check">
@@ -393,6 +497,7 @@ function Checkout() {
 
                 </label>
 
+                {/* CASH ON DELIVERY */}
 
                 <label
                   className={
@@ -417,6 +522,7 @@ function Checkout() {
                   </span>
 
                   <span className="payment-info">
+
                     <strong>
                       Cash on Delivery
                     </strong>
@@ -424,6 +530,7 @@ function Checkout() {
                     <small>
                       Pay when your order arrives
                     </small>
+
                   </span>
 
                   <span className="payment-check">
@@ -436,8 +543,7 @@ function Checkout() {
 
             </section>
 
-
-            {/* SAFETY */}
+            {/* SECURITY */}
 
             <div className="checkout-security">
               🔒 Your payment and personal information
@@ -446,8 +552,7 @@ function Checkout() {
 
           </div>
 
-
-          {/* RIGHT - SUMMARY */}
+          {/* RIGHT SECTION - SUMMARY */}
 
           <aside className="checkout-summary">
 
@@ -463,6 +568,7 @@ function Checkout() {
 
             </div>
 
+            {/* CART ITEMS */}
 
             <div className="checkout-items">
 
@@ -495,7 +601,9 @@ function Checkout() {
                   </div>
 
                   <strong>
-                    ₹{item.price * item.quantity}
+                    ₹
+                    {Number(item.price || 0) *
+                      Number(item.quantity || 1)}
                   </strong>
 
                 </div>
@@ -504,11 +612,12 @@ function Checkout() {
 
             </div>
 
-
             <div className="checkout-summary-divider"></div>
 
+            {/* SUBTOTAL */}
 
             <div className="checkout-price-row">
+
               <span>
                 Subtotal
               </span>
@@ -516,10 +625,13 @@ function Checkout() {
               <strong>
                 ₹{subtotal}
               </strong>
+
             </div>
 
+            {/* DELIVERY */}
 
             <div className="checkout-price-row">
+
               <span>
                 Delivery Fee
               </span>
@@ -527,10 +639,13 @@ function Checkout() {
               <strong>
                 ₹{deliveryFee}
               </strong>
+
             </div>
 
+            {/* TAX */}
 
             <div className="checkout-price-row">
+
               <span>
                 Taxes
               </span>
@@ -538,8 +653,10 @@ function Checkout() {
               <strong>
                 ₹{tax}
               </strong>
+
             </div>
 
+            {/* TOTAL */}
 
             <div className="checkout-total">
 
@@ -553,6 +670,7 @@ function Checkout() {
 
             </div>
 
+            {/* PLACE ORDER */}
 
             <button
               type="submit"
@@ -561,7 +679,6 @@ function Checkout() {
               Place Order
               <span>→</span>
             </button>
-
 
             <Link
               to="/cart"

@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
@@ -8,16 +9,48 @@ function OrderDetails() {
 
   const [order, setOrder] = useState(null);
 
+  // =========================================
+  // USER ORDERS KEY
+  // =========================================
+
+  const userEmail = localStorage.getItem("userEmail");
+
+  const ordersKey = userEmail
+    ? `foodEaseOrders_${userEmail}`
+    : null;
+
+  // =========================================
+  // LOAD ORDER DETAILS
+  // =========================================
+
   useEffect(() => {
-    const savedOrders =
-      JSON.parse(localStorage.getItem("orders")) || [];
+    if (!ordersKey) {
+      setOrder(null);
+      return;
+    }
 
-    const foundOrder = savedOrders.find(
-      (item) => item.id === id
-    );
+    try {
+      const savedOrders = JSON.parse(
+        localStorage.getItem(ordersKey) || "[]"
+      );
 
-    setOrder(foundOrder);
-  }, [id]);
+      const foundOrder = Array.isArray(savedOrders)
+        ? savedOrders.find(
+            (item) => item.id === id
+          )
+        : null;
+
+      setOrder(foundOrder || null);
+
+    } catch (error) {
+      console.error("Order loading error:", error);
+      setOrder(null);
+    }
+  }, [id, ordersKey]);
+
+  // =========================================
+  // ORDER NOT FOUND
+  // =========================================
 
   if (!order) {
     return (
@@ -43,11 +76,35 @@ function OrderDetails() {
     );
   }
 
+  // =========================================
+  // ORDER STATUS
+  // =========================================
+
   const isDelivered =
     order.status === "Delivered";
 
   const isOnTheWay =
     order.status === "On the way";
+
+  const orderItems = order.items || [];
+
+  const itemTotal = orderItems.reduce(
+    (total, item) =>
+      total +
+      Number(item.price || 0) *
+        Number(item.quantity || 0),
+    0
+  );
+
+  const deliveryFee =
+    order.deliveryFee ?? 40;
+
+  const tax =
+    order.tax ?? Math.round(itemTotal * 0.05);
+
+  // =========================================
+  // ORDER DETAILS PAGE
+  // =========================================
 
   return (
     <div className="order-details-page">
@@ -58,7 +115,7 @@ function OrderDetails() {
 
         <div className="order-details-breadcrumb">
 
-          <Link to="/">
+          <Link to="/home">
             Home
           </Link>
 
@@ -75,7 +132,6 @@ function OrderDetails() {
           </span>
 
         </div>
-
 
         {/* HEADER */}
 
@@ -111,10 +167,9 @@ function OrderDetails() {
 
         </div>
 
-
         <div className="order-details-layout">
 
-          {/* LEFT */}
+          {/* LEFT SECTION */}
 
           <div className="order-details-left">
 
@@ -142,8 +197,9 @@ function OrderDetails() {
 
               </div>
 
-
               <div className="tracking-timeline">
+
+                {/* ORDER PLACED */}
 
                 <div
                   className={
@@ -160,6 +216,7 @@ function OrderDetails() {
                   </div>
 
                   <div>
+
                     <strong>
                       Order Placed
                     </strong>
@@ -167,10 +224,10 @@ function OrderDetails() {
                     <span>
                       Your order has been received
                     </span>
+
                   </div>
 
                 </div>
-
 
                 <div
                   className={
@@ -180,6 +237,7 @@ function OrderDetails() {
                   }
                 ></div>
 
+                {/* PREPARING */}
 
                 <div
                   className={
@@ -190,12 +248,11 @@ function OrderDetails() {
                 >
 
                   <div className="timeline-dot">
-                    {isOnTheWay || isDelivered
-                      ? "✓"
-                      : "2"}
+                    {isOnTheWay || isDelivered ? "✓" : "2"}
                   </div>
 
                   <div>
+
                     <strong>
                       Preparing
                     </strong>
@@ -203,10 +260,10 @@ function OrderDetails() {
                     <span>
                       Restaurant is preparing your food
                     </span>
+
                   </div>
 
                 </div>
-
 
                 <div
                   className={
@@ -216,6 +273,7 @@ function OrderDetails() {
                   }
                 ></div>
 
+                {/* ON THE WAY */}
 
                 <div
                   className={
@@ -230,6 +288,7 @@ function OrderDetails() {
                   </div>
 
                   <div>
+
                     <strong>
                       On the Way
                     </strong>
@@ -237,10 +296,10 @@ function OrderDetails() {
                     <span>
                       Delivery partner is heading to you
                     </span>
+
                   </div>
 
                 </div>
-
 
                 <div
                   className={
@@ -250,6 +309,7 @@ function OrderDetails() {
                   }
                 ></div>
 
+                {/* DELIVERED */}
 
                 <div
                   className={
@@ -264,6 +324,7 @@ function OrderDetails() {
                   </div>
 
                   <div>
+
                     <strong>
                       Delivered
                     </strong>
@@ -271,6 +332,7 @@ function OrderDetails() {
                     <span>
                       Enjoy your delicious meal!
                     </span>
+
                   </div>
 
                 </div>
@@ -279,15 +341,16 @@ function OrderDetails() {
 
             </section>
 
-
             {/* RESTAURANT */}
 
             <section className="order-restaurant-card">
 
               <div className="details-card-title">
+
                 <h2>
                   Restaurant
                 </h2>
+
               </div>
 
               <div className="details-restaurant-content">
@@ -312,8 +375,7 @@ function OrderDetails() {
 
             </section>
 
-
-            {/* ITEMS */}
+            {/* ORDERED ITEMS */}
 
             <section className="details-items-card">
 
@@ -324,56 +386,51 @@ function OrderDetails() {
                 </h2>
 
                 <span>
-                  {order.items.length} items
+                  {orderItems.length} items
                 </span>
 
               </div>
 
-
               <div className="details-items-list">
 
-                {order.items.map(
-                  (item, index) => (
+                {orderItems.map((item, index) => (
 
-                    <div
-                      className="details-food-item"
-                      key={`${item.name}-${index}`}
-                    >
+                  <div
+                    className="details-food-item"
+                    key={`${item.id || item.name}-${index}`}
+                  >
 
-                      <div className="details-food-icon">
-                        🍽️
-                      </div>
+                    <div className="details-food-icon">
+                      🍽️
+                    </div>
 
-                      <div className="details-food-info">
+                    <div className="details-food-info">
 
-                        <h3>
-                          {item.name}
-                        </h3>
+                      <h3>
+                        {item.name}
+                      </h3>
 
-                        <span>
-                          ₹{item.price} ×{" "}
-                          {item.quantity}
-                        </span>
-
-                      </div>
-
-                      <strong>
-                        ₹
-                        {item.price *
-                          item.quantity}
-                      </strong>
+                      <span>
+                        ₹{item.price} × {item.quantity}
+                      </span>
 
                     </div>
 
-                  )
-                )}
+                    <strong>
+                      ₹
+                      {Number(item.price || 0) *
+                        Number(item.quantity || 0)}
+                    </strong>
+
+                  </div>
+
+                ))}
 
               </div>
 
             </section>
 
-
-            {/* DELIVERY */}
+            {/* DELIVERY ADDRESS */}
 
             <section className="delivery-card">
 
@@ -385,7 +442,6 @@ function OrderDetails() {
 
               </div>
 
-
               <div className="delivery-content">
 
                 <div className="delivery-icon">
@@ -395,8 +451,7 @@ function OrderDetails() {
                 <div>
 
                   <h3>
-                    {order.customer?.name ||
-                      "Customer"}
+                    {order.customer?.name || "Customer"}
                   </h3>
 
                   <p>
@@ -405,15 +460,16 @@ function OrderDetails() {
                   </p>
 
                   <p>
-                    {order.customer?.city || ""}
-                    {" "}
+                    {order.customer?.city || ""}{" "}
                     {order.customer?.pincode || ""}
                   </p>
 
                   {order.customer?.phone && (
+
                     <span>
                       📞 {order.customer.phone}
                     </span>
+
                   )}
 
                 </div>
@@ -424,15 +480,13 @@ function OrderDetails() {
 
           </div>
 
-
-          {/* RIGHT SUMMARY */}
+          {/* RIGHT SECTION - PAYMENT SUMMARY */}
 
           <aside className="order-details-summary">
 
             <h2>
               Payment Summary
             </h2>
-
 
             <div className="details-payment-method">
 
@@ -446,9 +500,9 @@ function OrderDetails() {
 
             </div>
 
-
             <div className="details-summary-divider"></div>
 
+            {/* ITEM TOTAL */}
 
             <div className="details-summary-row">
 
@@ -457,18 +511,12 @@ function OrderDetails() {
               </span>
 
               <strong>
-                ₹
-                {order.items.reduce(
-                  (total, item) =>
-                    total +
-                    item.price *
-                      item.quantity,
-                  0
-                )}
+                ₹{itemTotal}
               </strong>
 
             </div>
 
+            {/* DELIVERY FEE */}
 
             <div className="details-summary-row">
 
@@ -477,11 +525,12 @@ function OrderDetails() {
               </span>
 
               <strong>
-                ₹40
+                ₹{deliveryFee}
               </strong>
 
             </div>
 
+            {/* TAX */}
 
             <div className="details-summary-row">
 
@@ -490,17 +539,14 @@ function OrderDetails() {
               </span>
 
               <strong>
-                ₹
-                {Math.round(
-                  order.total * 0.05
-                )}
+                ₹{tax}
               </strong>
 
             </div>
 
-
             <div className="details-summary-divider"></div>
 
+            {/* GRAND TOTAL */}
 
             <div className="details-grand-total">
 
@@ -514,10 +560,14 @@ function OrderDetails() {
 
             </div>
 
+            {/* SECURITY */}
 
             <div className="order-safe-box">
+
               🔒
+
               <div>
+
                 <strong>
                   Secure Order
                 </strong>
@@ -526,9 +576,12 @@ function OrderDetails() {
                   Your order information is safe
                   with FoodEase.
                 </span>
+
               </div>
+
             </div>
 
+            {/* BACK TO ORDERS */}
 
             <Link
               to="/orders"
@@ -537,6 +590,7 @@ function OrderDetails() {
               ← Back to Orders
             </Link>
 
+            {/* ORDER AGAIN */}
 
             <Link
               to="/restaurants"
