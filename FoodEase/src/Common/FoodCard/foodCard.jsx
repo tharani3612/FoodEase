@@ -1,3 +1,4 @@
+
 import "./foodCard.css";
 
 function FoodCard({
@@ -9,39 +10,46 @@ function FoodCard({
   return (
     <div className="food-card">
 
-      {/* Food Image */}
+      {/* FOOD IMAGE */}
+
       <div className="food-card-image">
 
         <img
           src={food.image}
           alt={food.name}
+          loading="lazy"
         />
 
-        {/* Popular Badge */}
+        {/* POPULAR BADGE */}
+
         {food.isPopular && (
           <span className="popular-badge">
             Popular
           </span>
         )}
 
-        {/* Wishlist Button */}
+        {/* WISHLIST BUTTON */}
+
         <button
+          type="button"
           className={`food-wishlist-btn ${
             isWishlisted ? "active" : ""
           }`}
-          onClick={() => onAddToWishlist(food)}
+          onClick={() => onAddToWishlist?.(food)}
           aria-label={
             isWishlisted
               ? "Remove from wishlist"
               : "Add to wishlist"
           }
+          aria-pressed={isWishlisted}
         >
           {isWishlisted ? "♥" : "♡"}
         </button>
 
       </div>
 
-      {/* Food Content */}
+      {/* FOOD CONTENT */}
+
       <div className="food-card-content">
 
         <div className="food-card-header">
@@ -49,14 +57,16 @@ function FoodCard({
           <h3>{food.name}</h3>
 
           <span className="food-rating">
-            ⭐ {food.rating}
+            ⭐ {food.rating || "4.2"}
           </span>
 
         </div>
 
         <p className="food-description">
-          {food.description}
+          {food.description || "Delicious food from FoodEase"}
         </p>
+
+        {/* PRICE AND CART */}
 
         <div className="food-card-bottom">
 
@@ -65,8 +75,9 @@ function FoodCard({
           </span>
 
           <button
+            type="button"
             className="add-food-btn"
-            onClick={() => onAddToCart(food)}
+            onClick={() => onAddToCart?.(food)}
           >
             + Add
           </button>
